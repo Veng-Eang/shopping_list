@@ -19,14 +19,14 @@ class _NewItemState extends State<NewItem> {
   var _enteredQuantity = 1;
   var _selectedCategory = categories[Categories.vegetables]!;
 
-  void _saveItem() {
+  void _saveItem() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       print('$_enteredName   $_enteredQuantity    $_selectedCategory     ');
       final url = Uri.https(
           'learn-flutter-64271-default-rtdb.asia-southeast1.firebasedatabase.app',
           'shopping-list.json');
-      http.post(
+      final response = await http.post(
         url,
         headers: {'Content-type': 'application/json'},
         body: json.encode(
@@ -37,6 +37,11 @@ class _NewItemState extends State<NewItem> {
           },
         ),
       );
+      print(response.body);
+      print(response.statusCode);
+      if (!context.mounted) {
+        return;
+      }
       Navigator.of(context).pop();
     }
   }
